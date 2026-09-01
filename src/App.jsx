@@ -62,8 +62,12 @@ export default function App() {
   // TariffForm still calls this exact prop name — unchanged
   const handleSubmit = runAnalysis
 
-  // Register WebMCP tools once, on mount
+  // Register WebMCP tools once, on mount.
+  // Guarded because React StrictMode double-invokes effects in dev,
+  // which would otherwise try to register each tool name twice.
   useEffect(() => {
+    if (window.__tariffToolsRegistered) return
+    window.__tariffToolsRegistered = true
     registerTariffTools({
       runAnalysis,
       getLastFormData: () => lastFormDataRef.current
