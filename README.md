@@ -1,16 +1,16 @@
-# React + Vite
+## WebMCP integration
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This app now exposes two tools via [WebMCP](https://github.com/webmachinelearning/webmcp), so an AI agent can run tariff analysis directly on this page — not just describe it in a chat window.
 
-Currently, two official plugins are available:
+**Tools exposed:**
+- `analyze_tariff` — runs a full tariff analysis for a product, origin country, quantity, and unit price
+- `switch_origin_country` — re-runs the last analysis with a different origin country, for comparing sourcing options
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Both tools call the app's existing analysis logic directly, so results update live in the UI — the same page a human is looking at updates in real time as the agent works.
 
-## React Compiler
+**How to test:**
+1. Open this app's deployed URL in Chrome 149+ with `chrome://flags/#enable-webmcp-testing` enabled, or in ChatGPT's desktop app using its in-app browser.
+2. Ask the agent something like: *"Analyze the tariff for importing 500 ceramic mugs from China at $2 each."*
+3. Watch the result appear on the page live, without manually filling the form.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Built for the [OpenAI WebMCP Challenge](https://webmcp.devpost.com/).
