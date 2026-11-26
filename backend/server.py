@@ -1,6 +1,6 @@
 # server.py: the API the React app calls.
 # AI narrows the choices, the database gives the rate, plain code does the math.
-import sqlite3
+import os, sqlite3
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
@@ -9,8 +9,12 @@ from codes import normalize_code
 from duty import duty
 from rates import parse_rate
 
+DB = "backend/tariffs.db"
+# websites allowed to call this server, separated by commas
+SITES = os.environ.get("ALLOWED_ORIGIN", "http://localhost:5173").split(",")
+
 app = FastAPI()
-app.add_middleware(CORSMiddleware, allow_origins=["http://localhost:5173"],
+app.add_middleware(CORSMiddleware, allow_origins=SITES,
                    allow_methods=["*"], allow_headers=["*"])
 
 class Shipment(BaseModel):  # the four fields the form sends
@@ -23,7 +27,7 @@ class Shipment(BaseModel):  # the four fields the form sends
 def analyze(s: Shipment):
   # step 1: get the real tariff lines under the headings the AI guessed
   heads = guess_headings(s.product)
-  con = sqlite3.connect("backend/tariffs.db")
+  con = sqlite3.connect(DB)
   marks = ",".join("?" * len(heads))
   rows = con.execute(f"SELECT code, description, rate FROM rates WHERE substr(code, 1, 4) IN ({marks})", heads).fetchall()
   if not rows:
